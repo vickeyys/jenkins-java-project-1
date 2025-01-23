@@ -1,6 +1,6 @@
 pipeline {
     agent { 
-        label 'maven-server'  // Use your Maven server as the agent
+        label 'maven'  // Use your Maven server as the agent
     }
 
     environment {
