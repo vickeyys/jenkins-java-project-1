@@ -70,7 +70,7 @@ pipeline {
                             mvn deploy -P prod \
                             -DaltDeploymentRepository=nexus-prod::default::http://54.145.71.222:8081/repository/nexus-prod/ \
                             -Dnexus.username=${NEXUS_PROD_CRED_USR} \
-                            -Dnexus.password=${NEXUS_PROD_CRED_PSW}
+                            -Dnexus.password=${NEXUS_PROD_CRED_PSW} -X
                         """
                     } else if (env.BRANCH_NAME == 'stag') {
                         echo "Deploying to Staging Nexus Repository"
@@ -78,7 +78,7 @@ pipeline {
                             mvn deploy -P stag \
                             -DaltDeploymentRepository=nexus-stag::default::http://54.145.71.222:8081/repository/nexus-stag/ \
                             -Dnexus.username=${NEXUS_STAG_CRED_USR} \
-                            -Dnexus.password=${NEXUS_STAG_CRED_PSW}
+                            -Dnexus.password=${NEXUS_STAG_CRED_PSW} -X
                         """
                     } else {
                         error "Branch ${env.BRANCH_NAME} is not configured for deployment."
