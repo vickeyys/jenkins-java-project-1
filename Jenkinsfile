@@ -18,8 +18,8 @@ pipeline {
         stage('Compile') {
             steps {
                 script {
-                    if (env.BRANCH_NAME == 'prod') {
-                        echo "Compiling for Production"
+                    if (env.BRANCH_NAME == 'master') {
+                        echo "Compiling for master"
                         // Compile with prod profile
                         sh 'mvn clean compile -P prod'
                     } else if (env.BRANCH_NAME == 'stag') {
@@ -36,8 +36,8 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    if (env.BRANCH_NAME == 'prod') {
-                        echo "Running tests for Production"
+                    if (env.BRANCH_NAME == 'master') {
+                        echo "Running tests for master"
                         // Test with prod profile
                         sh 'mvn test -P prod'
                     } else if (env.BRANCH_NAME == 'stag') {
@@ -54,8 +54,8 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    if (env.BRANCH_NAME == 'prod') {
-                        echo "Building for Production"
+                    if (env.BRANCH_NAME == 'master') {
+                        echo "Building for master"
                         // Build with prod profile
                         sh 'mvn package -P prod'
                     } else if (env.BRANCH_NAME == 'stag') {
@@ -72,7 +72,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    if (env.BRANCH_NAME == 'prod') {
+                    if (env.BRANCH_NAME == 'master') {
                         echo "Deploying to Production"
                         // Add your production deployment steps here
                     } else if (env.BRANCH_NAME == 'stag') {
