@@ -68,7 +68,6 @@ pipeline {
                         echo "Deploying to Production Nexus Repository"
                         sh """
                             mvn deploy -P prod \
-                            -DaltDeploymentRepository=nexus-prod::default::http://54.145.71.222:8081/repository/nexus-prod/ \
                             -Dnexus.username=${NEXUS_PROD_CRED_USR} \
                             -Dnexus.password=${NEXUS_PROD_CRED_PSW} -X
                         """
@@ -76,7 +75,6 @@ pipeline {
                         echo "Deploying to Staging Nexus Repository"
                         sh """
                             mvn deploy -P stag \
-                            -DaltDeploymentRepository=nexus-stag::default::http://54.145.71.222:8081/repository/nexus-stag/ \
                             -Dnexus.username=${NEXUS_STAG_CRED_USR} \
                             -Dnexus.password=${NEXUS_STAG_CRED_PSW} -X
                         """
