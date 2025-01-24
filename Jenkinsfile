@@ -1,18 +1,18 @@
 pipeline {
     agent { 
-        label 'maven'  // Use your Maven server as the agent
+        label 'maven' // Use your Maven server as the agent
     }
 
     environment {
-        GITHUB_TOKEN = credentials('github-token-id')
-        NEXUS_PROD_CRED = credentials('nexus-prod') // Jenkins credentials ID for Nexus Production
-        NEXUS_STAG_CRED = credentials('nexus-stag') // Jenkins credentials ID for Nexus Staging
+        GITHUB_TOKEN = credentials('github-token-id') // Replace with your GitHub token credentials ID
+        NEXUS_PROD_CRED = credentials('nexus-prod')  // Replace with your Nexus production credentials ID
+        NEXUS_STAG_CRED = credentials('nexus-stag')  // Replace with your Nexus staging credentials ID
     }
 
     stages {
         stage('Git Checkout') {
             steps {
-                // Checkout code from the Git repository
+                // Checkout the correct branch
                 git url: 'https://github.com/vickeyys/jenkins-java-project-1.git', credentialsId: 'github-token-id'
             }
         }
@@ -21,13 +21,13 @@ pipeline {
             steps {
                 script {
                     if (env.BRANCH_NAME == 'master') {
-                        echo "Compiling for Production branch"
+                        echo "Compiling for production"
                         sh 'mvn clean compile -P prod'
                     } else if (env.BRANCH_NAME == 'stag') {
-                        echo "Compiling for Staging branch"
+                        echo "Compiling for staging"
                         sh 'mvn clean compile -P stag'
                     } else {
-                        echo "Branch ${env.BRANCH_NAME} is not valid for this pipeline"
+                        error "Branch ${env.BRANCH_NAME} is not configured for this pipeline."
                     }
                 }
             }
@@ -37,29 +37,25 @@ pipeline {
             steps {
                 script {
                     if (env.BRANCH_NAME == 'master') {
-                        echo "Running tests for Production"
+                        echo "Running tests for production"
                         sh 'mvn test -P prod'
                     } else if (env.BRANCH_NAME == 'stag') {
-                        echo "Running tests for Staging"
+                        echo "Running tests for staging"
                         sh 'mvn test -P stag'
-                    } else {
-                        echo "Branch ${env.BRANCH_NAME} is not valid for this pipeline"
                     }
                 }
             }
         }
 
-        stage('Build') {
+        stage('Package') {
             steps {
                 script {
                     if (env.BRANCH_NAME == 'master') {
-                        echo "Building for Production"
+                        echo "Packaging for production"
                         sh 'mvn package -P prod'
                     } else if (env.BRANCH_NAME == 'stag') {
-                        echo "Building for Staging"
+                        echo "Packaging for staging"
                         sh 'mvn package -P stag'
-                    } else {
-                        echo "Branch ${env.BRANCH_NAME} is not valid for this pipeline"
                     }
                 }
             }
@@ -72,7 +68,7 @@ pipeline {
                         echo "Deploying to Production Nexus Repository"
                         sh """
                             mvn deploy -P prod \
-                            -DaltDeploymentRepository=nexus-prod::default::http://54.145.71.222:8081/repository/production/ \
+                            -DaltDeploymentRepository=nexus-prod::default::http://54.145.71.222:8081/repository/nexus-prod/ \
                             -Dnexus.username=${NEXUS_PROD_CRED_USR} \
                             -Dnexus.password=${NEXUS_PROD_CRED_PSW}
                         """
@@ -80,12 +76,12 @@ pipeline {
                         echo "Deploying to Staging Nexus Repository"
                         sh """
                             mvn deploy -P stag \
-                            -DaltDeploymentRepository=nexus-stag::default::http://54.145.71.222:8081/repository/stag/ \
+                            -DaltDeploymentRepository=nexus-stag::default::http://54.145.71.222:8081/repository/nexus-stag/ \
                             -Dnexus.username=${NEXUS_STAG_CRED_USR} \
                             -Dnexus.password=${NEXUS_STAG_CRED_PSW}
                         """
                     } else {
-                        echo "Branch ${env.BRANCH_NAME} is not valid for this pipeline"
+                        error "Branch ${env.BRANCH_NAME} is not configured for deployment."
                     }
                 }
             }
@@ -94,10 +90,10 @@ pipeline {
 
     post {
         success {
-            echo "Build and deployment completed successfully!"
+            echo "Pipeline executed successfully!"
         }
         failure {
-            echo "Build or deployment failed. Check the logs for details."
+            echo "Pipeline failed. Check the logs for more details."
         }
     }
 }
