@@ -31,12 +31,12 @@
         <!-- Staging Repository -->
         <snapshotRepository>
             <id>nexus-stag</id>
-            <url>http://54.145.71.222:8081/repository/stag/</url>
+            <url>http://54.145.71.222:8081/repository/nexus-stag/</url>
         </snapshotRepository>
         <!-- Production Repository -->
         <repository>
             <id>nexus-prod</id>
-            <url>http://54.145.71.222:8081/repository/production/</url>
+            <url>http://54.145.71.222:8081/repository/nexus-prod/</url>
         </repository>
     </distributionManagement>
     
